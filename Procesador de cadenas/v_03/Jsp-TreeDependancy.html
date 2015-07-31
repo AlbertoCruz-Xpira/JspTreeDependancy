@@ -1,0 +1,89 @@
+<!-- @author Alberto Cruz
+	 @recursos Se han seguido los tutoriales de:
+	 http://www.html5rocks.com/es/tutorials/file/dndfiles/
+	 la referencia a FileApi de http://www.w3.org/TR/file-upload/
+	 y la referencia a FileReader de http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api
+	 Se utilizo la librería https://highlightjs.org/ para el remarcado de código.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/estilos.css" media="screen" />
+	<!--<link rel="stylesheet" href="css/highlight.pack/default.min.css">-->
+	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script type="text/javascript" src="js/cargador_archivos.js"></script>
+	<script type="text/javascript" src="js/control_busqueda.js"></script>
+	<!--<script type="text/javascript" src="js/highlight.pack.js"></script>-->
+	
+	<script>
+	<!-- cambiar la palabra "cad" por la palabra a buscar --> 
+	function buscar_cadena(cad) {
+		var result = $("#resultado").val() + '\n' + cad.toUpperCase() + '\n' + '\n';
+		var lines = $('#dyd_detail').val().split('\n');
+		for (var i = 0; i < lines.length; i++){
+			//console.log("buscando " + cad + " en: " + i + ": " + lines[i]);
+			if (lines[i].indexOf(cad) >= 0) {
+				<!-- Caso Include Page -->
+				if (lines[i].indexOf("page") >= 0) {
+					var inicio = lines[i].indexOf('es.segittur.spaininfo');
+					var fin = lines[i].lastIndexOf(':');
+					result += "element: " + lines[i].substring(inicio+21, fin) + '\n';
+				<!-- Caso Include Template -->
+				} else if (lines[i].indexOf('property="template"') >= 0) {
+					var inicio = lines[i].indexOf('element="');
+					result += "template: " + lines[i].substring(inicio+9, fin) + '\n';
+				<!-- Caso Import -->
+				} else {
+					result += lines[i] + '\n';
+				}
+			} 
+		}
+		$("#resultado").val(result);
+	}
+	</script>
+	
+</head>
+
+<body>
+	<div class="col100" id="alto324">
+		<div class="col30 centered">
+			<p class="etiqueta_azul">Fichero/s a analizar</p>		
+			<input type="file" id="files" name="files[]" multiple />
+			<div class="punteada">
+				<div id="drop_zone"><p>Suelta los archivos aquí.</p></div>
+			</div>
+		</div>
+		
+		<div class="col20 centered">
+			<p class="etiqueta_azul">Filtros</p>
+				<div id="filter_list">
+					<input type="checkbox" id="includeFilter" value="import" checked> Includes<br>
+					<input type="checkbox" id="importFilter" value="include" checked> Imports<br>
+				</div>
+				<button onclick="control_busqueda()" id="boton_filtrar">Filtrar</button>
+		</div>
+
+		<div class="col50 centered">
+			<p class="etiqueta_azul">Area Resultado</p>
+			<pre><code><textarea  id="resultado" class="textarea_grande"></textarea></pre></code>
+		</div>
+	</div>
+	
+	<div class="col100 centered" id="text_area">
+		<p>Área de código</p>
+		<textarea id="dyd_result" class="textarea_pequenia"></textarea> <!-- se engloba en <pre><code> para aplicar los highlights -->
+		<pre><code><textarea id="dyd_detail" class="textarea_grande"></textarea></pre></code>
+	</div>
+	
+	
+	
+	<!-- SCRIPTS -->
+	<script type="text/javascript" src="js/cargador_archivos.js"></script>
+	<script>activateDropZoneHandler()</script>
+	<!--<script>$(document).ready(function() {
+	  $('pre code textarea').each(function(i, block) {
+		hljs.highlightBlock(block);
+	  });
+	});</script>-->
+</body>
